@@ -1,0 +1,17 @@
+<div class="container">
+
+  <div *ngIf = "!form">
+    <p>
+      Loading data...
+    </p>
+
+  </div>
+
+  <div *ngFor="let pd of form" class="card">
+        <!-- <img src="{{ article.urlToImage }}"> -->
+              <div class="card-body">
+                    <h3>{{ pd.Name }}</h3>
+                    <p> {{ pd.Username }}</p>
+               </div>
+  </div>  
+</div>

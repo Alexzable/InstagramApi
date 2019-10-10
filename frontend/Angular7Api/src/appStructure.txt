@@ -1,0 +1,17 @@
+● src
++---● app
+|   +--● user-details
+|   |  |--user-details.component.ts|.html
+|   |  +--● user-account
+|   |  |  |--user-account.component.ts|.html
+|   |  |
+|   |  +--● user-info
+|   |  |  |--user-info.component.ts|.html
+|   |  |
+|   |  +--● shared
+|   |     |--user-detail.service.ts
+|   |     |--user-detail.model.ts
+|   |
+|   |--app.module.ts
+|
+|--index.html (cdn path for bootstrap & fa icons)
