@@ -32,8 +32,14 @@ namespace WebApi.Migrations
                     b.Property<double>("Comments")
                         .HasColumnType("float");
 
-                    b.Property<int>("ID")
-                        .HasColumnType("int");
+                    b.Property<double>("FollowedBy")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Followers")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Html")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("IDInsta")
                         .HasColumnType("float");
@@ -46,6 +52,9 @@ namespace WebApi.Migrations
 
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Media")
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");

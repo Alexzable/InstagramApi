@@ -29,7 +29,6 @@ namespace WebApi.Controllers
         {
             if (!String.IsNullOrEmpty(code))
             {
-                code = code.ToString();
                 await GetDataInstagramToken(code);
 
             }
@@ -54,14 +53,7 @@ namespace WebApi.Controllers
                     var responseString = await response.Content.ReadAsStringAsync();
                     var jsResult = (JObject)JsonConvert.DeserializeObject(responseString);
                      accessToken = (string)jsResult["access_token"];
-                    string imageurl = (string)jsResult["user"]["profile_picture"];
-                    User user2 = new User();
-                    user2.ProfePicture = imageurl;
-                    string fullname = (string)jsResult["user"]["full_name"];
-                    user2.Name = fullname;
-
-                    SaveData(user2);
-
+                  
                     return accessToken;
                 }
             }
@@ -95,7 +87,7 @@ namespace WebApi.Controllers
         }
         public async Task GetDataInstagramToken(string code)
         {
-            User userInfo = new User();
+            
 
             try
             {
@@ -112,27 +104,43 @@ namespace WebApi.Controllers
                     var jsResult = (JObject)JsonConvert.DeserializeObject(responseString);
                     var jsResult2 = (JObject)JsonConvert.DeserializeObject(responseString2);
 
-                    //get HTML CSS AND JS CODE .
-                    Task embeededCode = Task.Run(() => GetEaambededDataInstagramToken("https://www.instagram.com/p/B3HYAN2iGoe/"));
-                    embeededCode.Wait();
-                    double PictureNr = (double)jsResult2["data"]["counts"]["media"];
+                    double IDInsta = (double)jsResult2["data"]["id"];
                     string LinkBio = (string)jsResult2["data"]["bio"];
                     string Location = (string)jsResult2["data"]["website"];
-
-                    double IDInsta = (double)jsResult["data"][0]["user"]["id"];
-                    string Name = (string)jsResult["data"][0]["user"]["full_name"];
-                    string ProfilePicture = (string)jsResult["data"][0]["user"]["profile_picture"];
-                    string Username = (string)jsResult["data"][0]["user"]["username"];
-
+                    string Name = (string)jsResult2["data"]["full_name"];
+                    string ProfilePicture = (string)jsResult2["data"]["profile_picture"];
+                    string Username = (string)jsResult2["data"]["username"];
+                    double PictureNr = (double)jsResult2["data"]["counts"]["media"];
+                    double Follows = (double)jsResult2["data"]["counts"]["follows"];
+                    double FollowedBy = (double)jsResult2["data"]["counts"]["followed_by"];
+                    
                     double Comments = 0;
                     double Likes = 0;
+                    string linkPhoto = (string)jsResult["data"][2]["link"];
                     for (int i = 0; i < PictureNr; i++)
                     {
                         Comments = Comments+ (double)jsResult["data"][i]["comments"]["count"];
                         Likes = Likes + (double)jsResult["data"][i]["likes"]["count"];
                     }
-                 
 
+
+                    userData.IDInsta = IDInsta;
+                    userData.LinkBio = LinkBio;
+                    userData.Location = Location;
+                    userData.Name = Name;
+                    userData.ProfePicture = ProfilePicture;
+                    userData.Username = Username;
+                    userData.Followers = Follows;
+                    userData.FollowedBy = FollowedBy;
+                    userData.Comments = Comments;
+                    userData.Likes = Likes;
+                    userData.ClientId = ConfigurationManager.AppSettings["client_id"];
+                    userData.ClientSecret = ConfigurationManager.AppSettings["client_secret"];
+
+
+                    //get HTML CSS AND JS CODE .
+                    Task embeededCode = Task.Run(() => GetEaambededDataInstagramToken(linkPhoto));
+                    embeededCode.Wait();
                 }
          
             }

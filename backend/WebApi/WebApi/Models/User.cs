@@ -15,7 +15,6 @@ namespace WebApi.Models
         public string Password { get; set; }
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
-        public int ID { get; set; }
         public string Name { get; set; }
         public string ProfePicture { get; set; }
         public string LinkBio { get; set; }
@@ -26,6 +25,7 @@ namespace WebApi.Models
         public string Html { get; set; }
         public double Media { get; set; }
         public double Followers { get; set; }
+        public double FollowedBy { get; set; }
 
     }
 }

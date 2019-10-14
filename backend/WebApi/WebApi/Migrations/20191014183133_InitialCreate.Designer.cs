@@ -9,7 +9,7 @@ using WebApi.Models;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20191009172707_InitialCreate")]
+    [Migration("20191014183133_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,8 +34,14 @@ namespace WebApi.Migrations
                     b.Property<double>("Comments")
                         .HasColumnType("float");
 
-                    b.Property<int>("ID")
-                        .HasColumnType("int");
+                    b.Property<double>("FollowedBy")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Followers")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Html")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("IDInsta")
                         .HasColumnType("float");
@@ -48,6 +54,9 @@ namespace WebApi.Migrations
 
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Media")
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");

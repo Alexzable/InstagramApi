@@ -14,14 +14,17 @@ namespace WebApi.Migrations
                     Password = table.Column<string>(nullable: false),
                     ClientId = table.Column<string>(nullable: true),
                     ClientSecret = table.Column<string>(nullable: true),
-                    ID = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     ProfePicture = table.Column<string>(nullable: true),
                     LinkBio = table.Column<string>(nullable: true),
                     Comments = table.Column<double>(nullable: false),
                     Likes = table.Column<double>(nullable: false),
                     IDInsta = table.Column<double>(nullable: false),
-                    Location = table.Column<string>(nullable: true)
+                    Location = table.Column<string>(nullable: true),
+                    Html = table.Column<string>(nullable: true),
+                    Media = table.Column<double>(nullable: false),
+                    Followers = table.Column<double>(nullable: false),
+                    FollowedBy = table.Column<double>(nullable: false)
                 },
                 constraints: table =>
                 {
