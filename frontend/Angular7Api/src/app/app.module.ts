@@ -3,22 +3,29 @@ import { NgModule } from '@angular/core';
 import {FormsModule} from '@angular/forms'
 
 import { AppComponent } from './app.component';
-import { UserDetailsComponent } from './user-details/user-details.component';
-import { UserAccountComponent } from './user-details/user-account/user-account.component';
 import { UserDetailService } from './shared/user-detail.service';
 import {HttpClientModule} from "@angular/common/http";
-import { UserInfoComponent } from './user-details/user-info/user-info.component';
+import { MatButtonModule, MatIconModule, MatListModule, MatToolbarModule, MatInputModule, MatMenuModule, MatDialogModule } from '@angular/material';
+import { NoopAnimationsModule, BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    UserDetailsComponent,
-    UserAccountComponent,
-    UserInfoComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    HttpClientModule,
+    BrowserModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatListModule,
+    MatIconModule,
+    MatDialogModule,
+    MatInputModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    MatMenuModule,
     HttpClientModule
   ],
   providers: [UserDetailService],

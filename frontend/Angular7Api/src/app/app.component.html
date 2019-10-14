@@ -1,3 +1,73 @@
-<div class="container">
-<app-user-details></app-user-details>
+<div class="rows">
+    <br>
+    <h1 style="text-align: center;">AngularApi Login</h1>
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <form #form="ngForm" autocomplete="off" (submit)="openUser(form)">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                <i class="fas fa-user-circle" [class.green-icon]="Username.valid"
+                                    [class.red-icon]="Username.invalid && Username.touched"></i>
+                            </div>
+                        </div>
+                        <input name="Username" #Username="ngModel" [(ngModel)]="user.Username" class="form-control"
+                            placeholder="Username or email" maxlength="25" minlength="5" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                <i class="fas fa-key" [class.green-icon]="Password.valid"
+                                    [class.red-icon]="Password.invalid && Password.touched"></i>
+                            </div>
+                        </div>
+                        <input type="password" name="Password" #Password="ngModel" [(ngModel)]="user.Password"
+                            class="form-control" placeholder="Password" maxlength="18" minlength="5" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success btn-lg btn-block" type="submit" [disabled]="form.invalid"><i
+                            class="fas fa-database"></i> Submit</button>
+                </div>
+
+            </form>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-2"></div>
+        
+        <div class="col-md-4">
+            <h3>User Insta EmbededCode Post</h3>
+            
+                <div class="embededCode" [innerHtml]="safeHtml"></div>
+        </div>
+        <div class="col-md-4">
+            <h3>User Insta Post</h3>
+            <span *ngIf="displayOrNot; then condition1 else condition2"></span>
+            <ng-template #condition1>
+                <h3 mat-subheader>0 user found on your list</h3>
+            </ng-template>
+            <ng-template #condition2>
+                <div *ngIf="!dataReceived">
+                    <i class="fas fa-key"></i> Not for the moment
+                </div>
+                <div *ngIf="dataReceived">
+                    <div class="glyphicon glyphicon-asterisk">Active now</div>
+                    <div mat-line>Username: {{user.Username}}</div>
+                    <p mat-line>Name: {{user.Name}} </p>
+                    <div style="border-radius: 6px;">
+                        <img src="{{user.ProfilePicture}}">
+                    </div>
+
+                </div>
+            </ng-template>
+        </div>
+        <div class="col-md-2"></div>
+
+    </div>
 </div>

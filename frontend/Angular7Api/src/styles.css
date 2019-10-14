@@ -25,7 +25,10 @@ input.ng-valid{
     color: grey;
     font-size: 18px;
   }
-  
+  .embededCode{
+    width:200px;
+    height: 100px;
+  }
   button {
     border: none;
     outline: 0;
@@ -48,3 +51,5 @@ input.ng-valid{
   button:hover, a:hover {
     opacity: 0.7;
   }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -11,6 +11,7 @@ export class UserDetail {
   public IDInsta: number;
   public Location: string;
   public ID: number;
+  public Html: string;
 
 
 }

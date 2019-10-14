@@ -23,6 +23,9 @@ namespace WebApi.Models
         public double Likes { get; set; }
         public double IDInsta { get; set; }
         public string Location { get; set; }
+        public string Html { get; set; }
+        public double Media { get; set; }
+        public double Followers { get; set; }
 
     }
 }

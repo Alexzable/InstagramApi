@@ -16,6 +16,7 @@ namespace WebApi.Controllers
 {
     public class CallBackController : Controller
     {
+        private static string accessToken = "";
         private static User userData = new User();
         private readonly UserContext _context;
 
@@ -30,60 +31,109 @@ namespace WebApi.Controllers
             {
                 code = code.ToString();
                 await GetDataInstagramToken(code);
+
             }
+            SaveData(userData);
             return Redirect(ConfigurationManager.AppSettings["localhost2"]);
         }
-        public async Task GetDataInstagramToken(string code)
+        public async Task<String> GetAccessToken(string code)
         {
-            User user2 = new User();
-
             try
             {
-
                 var values = new Dictionary<string, string>    {
                       { "client_id",ConfigurationManager.AppSettings["client_id"]},
                       { "client_secret", ConfigurationManager.AppSettings["client_secret"]},
                       { "grant_type", "authorization_code" },
                       { "redirect_uri", ConfigurationManager.AppSettings["redirect_uri"]},
-                      { "code", code}    
+                      { "code", code}
                 };
                 var content = new FormUrlEncodedContent(values);
-
-                double IDCurent = 0;
-                string accessToken = "";
-                using (var client2 = new HttpClient())
+                using (var client = new HttpClient())
                 {
-                    var response = await client2.PostAsync(ConfigurationManager.AppSettings["instagram_token"], content);
+                    var response = await client.PostAsync(ConfigurationManager.AppSettings["instagram_token"], content);
                     var responseString = await response.Content.ReadAsStringAsync();
                     var jsResult = (JObject)JsonConvert.DeserializeObject(responseString);
                      accessToken = (string)jsResult["access_token"];
-                   string imageurl = (string)jsResult["user"]["profile_picture"];
+                    string imageurl = (string)jsResult["user"]["profile_picture"];
+                    User user2 = new User();
                     user2.ProfePicture = imageurl;
                     string fullname = (string)jsResult["user"]["full_name"];
                     user2.Name = fullname;
-                    IDCurent = (double)jsResult["user"]["id"];
-                    user2.IDInsta = IDCurent;
 
+                    SaveData(user2);
 
+                    return accessToken;
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
 
+            }
+
+
+        }
+        public async Task GetEaambededDataInstagramToken(string PhotoUrl)
+        {
+            try
+            {
+                using(var client = new HttpClient())
+                {
+                    var response = await client.GetAsync("https://api.instagram.com/oembed?url=" + PhotoUrl);
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    JObject jObject = JObject.Parse(responseString);
+                    string displayHtml = (string)jObject.SelectToken("html");
+
+                    userData.Html = displayHtml;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+        }
+        public async Task GetDataInstagramToken(string code)
+        {
+            User userInfo = new User();
+
+            try
+            {
+                Task accessTokenTask = Task.Run(() => GetAccessToken(code));
+                accessTokenTask.Wait();
                 using (var client = new HttpClient())
                 {
+                    //GET SELF OWNER INFORMATION
                     var response = await client.GetAsync(ConfigurationManager.AppSettings["instagram_media"] + accessToken);
+                    // GET SELF MEDIA INFORMATION
+                    var response2 = await client.GetAsync(ConfigurationManager.AppSettings["instagram_owner"] + accessToken);
                     var responseString = await response.Content.ReadAsStringAsync();
+                    var responseString2 = await response2.Content.ReadAsStringAsync();
                     var jsResult = (JObject)JsonConvert.DeserializeObject(responseString);
-                    //data don t respond
-                    //double likes  = (double)jsResult["user"]["likes"];
-                    //double commens = (double)jsResult["user"]["comments"];
-                    //string link = (string)jsResult["user"]["link"];
+                    var jsResult2 = (JObject)JsonConvert.DeserializeObject(responseString2);
 
-                    //user2.LinkBio = link;
-                    //user2.Comments = commens;
-                    user2.ClientId = ConfigurationManager.AppSettings["client_id"];
-                    user2.ClientSecret = ConfigurationManager.AppSettings["client_secret"];
+                    //get HTML CSS AND JS CODE .
+                    Task embeededCode = Task.Run(() => GetEaambededDataInstagramToken("https://www.instagram.com/p/B3HYAN2iGoe/"));
+                    embeededCode.Wait();
+                    double PictureNr = (double)jsResult2["data"]["counts"]["media"];
+                    string LinkBio = (string)jsResult2["data"]["bio"];
+                    string Location = (string)jsResult2["data"]["website"];
+
+                    double IDInsta = (double)jsResult["data"][0]["user"]["id"];
+                    string Name = (string)jsResult["data"][0]["user"]["full_name"];
+                    string ProfilePicture = (string)jsResult["data"][0]["user"]["profile_picture"];
+                    string Username = (string)jsResult["data"][0]["user"]["username"];
+
+                    double Comments = 0;
+                    double Likes = 0;
+                    for (int i = 0; i < PictureNr; i++)
+                    {
+                        Comments = Comments+ (double)jsResult["data"][i]["comments"]["count"];
+                        Likes = Likes + (double)jsResult["data"][i]["likes"]["count"];
+                    }
+                 
+
                 }
-
-                SaveData(user2);
          
             }
             catch (Exception ex)

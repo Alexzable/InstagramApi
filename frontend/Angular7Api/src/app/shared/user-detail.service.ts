@@ -1,24 +1,25 @@
 import { Injectable } from '@angular/core';
 import { UserDetail } from './user-detail.model';
 import {HttpClient, HttpParams} from "@angular/common/http";
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserDetailService {
-  formData: UserDetail
+ 
   readonly rootURL ='https://localhost:44336/api';
+
   
   constructor(private http:HttpClient) { }
 
-  getUserAccount(formData:UserDetail){
+  getUser(Username:string, Password: string) : Observable<UserDetail>
+  {
     const params = new HttpParams()
-    .set('Username', formData.Username)
-    .set('Password', formData.Password);
+    .set('Username', Username)
+    .set('Password', Password);
 
-    return this.http.get(this.rootURL + '/Users/'+ formData.Username+"/"+formData.Password, { params })
-    .toPromise()
-    .then(res=> this.formData = res as UserDetail);
+    return this.http.get<UserDetail>(this.rootURL + '/Users/'+ Username+"/"+Password, { params });
     
   }
   
