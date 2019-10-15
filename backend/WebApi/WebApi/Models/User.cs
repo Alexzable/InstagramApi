@@ -26,6 +26,7 @@ namespace WebApi.Models
         public double Media { get; set; }
         public double Followers { get; set; }
         public double FollowedBy { get; set; }
+        public string ChosenPhoto { get; set; }
 
     }
 }

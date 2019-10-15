@@ -15,7 +15,7 @@ export class AppComponent implements OnInit{
   dataReceived : boolean =false;
   public user: UserDetail;
   public safeHtml: SafeHtml;
-  
+
   constructor(
     public service: UserDetailService,
     private sanitizer: DomSanitizer
@@ -43,7 +43,6 @@ export class AppComponent implements OnInit{
     
   }
 
- 
   openUser(form: NgForm): void {
    
     this.service.getUser(this.user.Username, this.user.Password)

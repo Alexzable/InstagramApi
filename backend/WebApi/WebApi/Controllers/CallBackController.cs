@@ -16,10 +16,7 @@ namespace WebApi.Controllers
 {
     public class CallBackController : Controller
     {
-        private static string accessToken = "";
-        private static User userData = new User();
-        private readonly UserContext _context;
-
+        private static User userData;
         [HttpGet]
         public ActionResult<User> InstaData()
         {
@@ -27,9 +24,12 @@ namespace WebApi.Controllers
         }
         public async Task<ActionResult> CallBack(string code)
         {
+            string accessToken = "";
             if (!String.IsNullOrEmpty(code))
             {
-                await GetDataInstagramToken(code);
+                accessToken = await GetAccessToken(code);
+                userData = await GetDataInstagram(accessToken);
+                userData.Html = await GetEaambededDataInstagram(userData.ChosenPhoto);
 
             }
             SaveData(userData);
@@ -52,7 +52,7 @@ namespace WebApi.Controllers
                     var response = await client.PostAsync(ConfigurationManager.AppSettings["instagram_token"], content);
                     var responseString = await response.Content.ReadAsStringAsync();
                     var jsResult = (JObject)JsonConvert.DeserializeObject(responseString);
-                     accessToken = (string)jsResult["access_token"];
+                    var accessToken = (string)jsResult["access_token"];
                   
                     return accessToken;
                 }
@@ -65,7 +65,7 @@ namespace WebApi.Controllers
 
 
         }
-        public async Task GetEaambededDataInstagramToken(string PhotoUrl)
+        public async Task<String> GetEaambededDataInstagram(string PhotoUrl)
         {
             try
             {
@@ -75,8 +75,9 @@ namespace WebApi.Controllers
                     var responseString = await response.Content.ReadAsStringAsync();
                     JObject jObject = JObject.Parse(responseString);
                     string displayHtml = (string)jObject.SelectToken("html");
+               
 
-                    userData.Html = displayHtml;
+                    return displayHtml;
                 }
             }
             catch (Exception ex)
@@ -85,14 +86,12 @@ namespace WebApi.Controllers
 
             }
         }
-        public async Task GetDataInstagramToken(string code)
+        public async Task<User> GetDataInstagram(string accessToken)
         {
-            
-
             try
             {
-                Task accessTokenTask = Task.Run(() => GetAccessToken(code));
-                accessTokenTask.Wait();
+                User getUserDataInstagram = new User();
+               
                 using (var client = new HttpClient())
                 {
                     //GET SELF OWNER INFORMATION
@@ -123,25 +122,22 @@ namespace WebApi.Controllers
                         Likes = Likes + (double)jsResult["data"][i]["likes"]["count"];
                     }
 
+                    getUserDataInstagram.IDInsta = IDInsta;
+                    getUserDataInstagram.LinkBio = LinkBio;
+                    getUserDataInstagram.Location = Location;
+                    getUserDataInstagram.Name = Name;
+                    getUserDataInstagram.ProfePicture = ProfilePicture;
+                    getUserDataInstagram.Username = Username;
+                    getUserDataInstagram.Followers = Follows;
+                    getUserDataInstagram.FollowedBy = FollowedBy;
+                    getUserDataInstagram.Comments = Comments;
+                    getUserDataInstagram.Likes = Likes;
+                    getUserDataInstagram.Media = PictureNr;
+                    getUserDataInstagram.ClientId = ConfigurationManager.AppSettings["client_id"];
+                    getUserDataInstagram.ClientSecret = ConfigurationManager.AppSettings["client_secret"];
+                    getUserDataInstagram.ChosenPhoto = linkPhoto;
 
-                    userData.IDInsta = IDInsta;
-                    userData.LinkBio = LinkBio;
-                    userData.Location = Location;
-                    userData.Name = Name;
-                    userData.ProfePicture = ProfilePicture;
-                    userData.Username = Username;
-                    userData.Followers = Follows;
-                    userData.FollowedBy = FollowedBy;
-                    userData.Comments = Comments;
-                    userData.Likes = Likes;
-                    userData.Media = PictureNr;
-                    userData.ClientId = ConfigurationManager.AppSettings["client_id"];
-                    userData.ClientSecret = ConfigurationManager.AppSettings["client_secret"];
-
-
-                    //get HTML CSS AND JS CODE .
-                    Task embeededCode = Task.Run(() => GetEaambededDataInstagramToken(linkPhoto));
-                    embeededCode.Wait();
+                    return getUserDataInstagram;
                 }
          
             }
@@ -150,10 +146,7 @@ namespace WebApi.Controllers
                 throw new Exception(ex.Message);
 
             }
-
-
         }
-
         public void SaveData(User user)
         {
             userData = user;
