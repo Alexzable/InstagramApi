@@ -15,8 +15,7 @@ export class AppComponent implements OnInit{
   dataReceived : boolean =false;
   public user: UserDetail;
   public safeHtml: SafeHtml;
-  public jsCallInstagram: string= '';
-
+  
   constructor(
     public service: UserDetailService,
     private sanitizer: DomSanitizer
@@ -29,18 +28,22 @@ export class AppComponent implements OnInit{
       ClientId: '',
       ClientSecret: '',
       Name: '',
-      ProfilePicture: '',
+      ProfePicture: '',
       LinkBio: '',
-      Comment: '',
-      Likes: '',
+      Comments: 0,
+      Likes: 0,
       IDInsta: 0,
       Location: '',
-      ID: 0,
-      Html: ''
+      Html: '',
+      Media: 0,
+      Followers: 0,
+      FollowedBy: 0
+
     }
     
   }
 
+ 
   openUser(form: NgForm): void {
    
     this.service.getUser(this.user.Username, this.user.Password)
@@ -54,5 +57,7 @@ export class AppComponent implements OnInit{
             (error: any) => console.log(error),
             ()=> console.log('completed')
         );
-}
+  } 
+  
+ 
 }

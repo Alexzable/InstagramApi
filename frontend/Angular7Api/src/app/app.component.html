@@ -40,11 +40,11 @@
     </div>
     <div class="row">
         <div class="col-md-2"></div>
-        
+
         <div class="col-md-4">
             <h3>User Insta EmbededCode Post</h3>
-            
-                <div class="embededCode" [innerHtml]="safeHtml"></div>
+
+            <div class="embededCode" [innerHtml]="safeHtml"></div>
         </div>
         <div class="col-md-4">
             <h3>User Insta Post</h3>
@@ -57,11 +57,21 @@
                     <i class="fas fa-key"></i> Not for the moment
                 </div>
                 <div *ngIf="dataReceived">
-                    <div class="glyphicon glyphicon-asterisk">Active now</div>
-                    <div mat-line>Username: {{user.Username}}</div>
-                    <p mat-line>Name: {{user.Name}} </p>
-                    <div style="border-radius: 6px;">
-                        <img src="{{user.ProfilePicture}}">
+
+                    <div class="card">
+                        <img src="{{user.ProfePicture}}" alt="{{user.Username}}" style="width:100%">
+                        <h3>{{user.Name}}</h3>
+                        <p class="title">{{user.LinkBio}}</p>
+                        <p>Host: {{user.Location}}</p>
+                        <p>Followers: {{user.Followers}}</p>
+                        <p>FollowedBy: {{user.FollowedBy}}</p>
+                        <div style="margin: 18px 0;">
+                            <i>Likes: {{user.Likes}} </i>
+                            <i>Comments: {{user.Comments}} </i>
+                            <i>Media: {{user.Media}}</i>
+                        </div>
+                        <p><button>{{user.ClientId}}</button></p>
+                        <p><button>{{user.ClientSecret}}</button></p>
                     </div>
 
                 </div>

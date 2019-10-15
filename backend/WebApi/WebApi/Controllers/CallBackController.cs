@@ -116,7 +116,7 @@ namespace WebApi.Controllers
                     
                     double Comments = 0;
                     double Likes = 0;
-                    string linkPhoto = (string)jsResult["data"][2]["link"];
+                    string linkPhoto = (string)jsResult["data"][1]["link"];
                     for (int i = 0; i < PictureNr; i++)
                     {
                         Comments = Comments+ (double)jsResult["data"][i]["comments"]["count"];
@@ -134,6 +134,7 @@ namespace WebApi.Controllers
                     userData.FollowedBy = FollowedBy;
                     userData.Comments = Comments;
                     userData.Likes = Likes;
+                    userData.Media = PictureNr;
                     userData.ClientId = ConfigurationManager.AppSettings["client_id"];
                     userData.ClientSecret = ConfigurationManager.AppSettings["client_secret"];
 

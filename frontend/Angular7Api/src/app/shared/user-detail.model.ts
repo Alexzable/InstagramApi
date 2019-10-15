@@ -4,14 +4,17 @@ export class UserDetail {
   public ClientId: string;
   public ClientSecret: string;
   public Name: string;
-  public ProfilePicture: string;
+  public ProfePicture: string;
   public LinkBio: string;
-  public Comment: string;
-  public Likes: string;
+  public Comments: number;
+  public Likes: number;
   public IDInsta: number;
   public Location: string;
-  public ID: number;
   public Html: string;
+  public Media: number;
+  public Followers: number;
+  public FollowedBy: number;
+
 
 
 }
