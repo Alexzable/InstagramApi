@@ -14,7 +14,6 @@ export class UserDetail {
   public Media: number;
   public Followers: number;
   public FollowedBy: number;
-
-
-
+  public ChosenPhoto: number;
+  public Photots : string[][];
 }

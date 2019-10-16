@@ -11,30 +11,49 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebApi.Models;
 using System.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace WebApi.Controllers
-{
+{ 
     public class CallBackController : Controller
     {
         private static User userData;
+        public static string accessTokenG = "";
+      
         [HttpGet]
-        public ActionResult<User> InstaData()
+        public void Atuhorization()
         {
-            return userData;
+            var client_id = ConfigurationManager.AppSettings["client_id"];
+            var redirect_url = ConfigurationManager.AppSettings["redirect_uri"];
+            Response.Redirect(ConfigurationManager.AppSettings["instagram_auth"] + client_id +
+               "&redirect_uri=" + redirect_url + "&response_type=code");
         }
+        [HttpGet]
         public async Task<ActionResult> CallBack(string code)
         {
-            string accessToken = "";
-            if (!String.IsNullOrEmpty(code))
-            {
-                accessToken = await GetAccessToken(code);
-                userData = await GetDataInstagram(accessToken);
-                userData.Html = await GetEaambededDataInstagram(userData.ChosenPhoto);
 
+            if (String.IsNullOrEmpty(code))
+            {
+                Atuhorization();
             }
-            SaveData(userData);
+            else if (!String.IsNullOrEmpty(code))
+            {
+                accessTokenG = await GetAccessToken(code);
+            }
+
             return Redirect(ConfigurationManager.AppSettings["localhost2"]);
         }
+
+        [HttpGet]
+        public async Task<ActionResult<User>> PassDataToAngular(string username, string password,string chosenphoto)
+        {
+
+            userData = await GetDataInstagram(accessTokenG, chosenphoto);
+            userData.Html = await GetEaambededDataInstagram(userData.ChosenPhoto);
+
+            return userData;
+        }
+        [HttpGet]
         public async Task<String> GetAccessToken(string code)
         {
             try
@@ -65,6 +84,7 @@ namespace WebApi.Controllers
 
 
         }
+        [HttpGet]
         public async Task<String> GetEaambededDataInstagram(string PhotoUrl)
         {
             try
@@ -86,7 +106,8 @@ namespace WebApi.Controllers
 
             }
         }
-        public async Task<User> GetDataInstagram(string accessToken)
+        [HttpGet]
+        public async Task<User> GetDataInstagram(string accessToken, string chosenphoto)
         {
             try
             {
@@ -115,7 +136,8 @@ namespace WebApi.Controllers
                     
                     double Comments = 0;
                     double Likes = 0;
-                    string linkPhoto = (string)jsResult["data"][1]["link"];
+                    int nrChosenPhoto = Convert.ToInt32(chosenphoto);
+                    string linkPhoto = (string)jsResult["data"][nrChosenPhoto]["link"];
                     for (int i = 0; i < PictureNr; i++)
                     {
                         Comments = Comments+ (double)jsResult["data"][i]["comments"]["count"];
@@ -147,14 +169,7 @@ namespace WebApi.Controllers
 
             }
         }
-        public void SaveData(User user)
-        {
-            userData = user;
-        }
-        public User GetData()
-        {
-            return userData;
-        }
+    
 
        
 

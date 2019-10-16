@@ -8,18 +8,19 @@ import { Observable } from 'rxjs';
 })
 export class UserDetailService {
  
-  readonly rootURL ='https://localhost:44336/api';
+  readonly rootURL ='https://localhost:44336/CallBack/PassDataToAngular/';
 
   
   constructor(private http:HttpClient) { }
 
-  getUser(Username:string, Password: string) : Observable<UserDetail>
+  getUser(Username:string, Password: string, ChosenPhoto: number) : Observable<UserDetail>
   {
     const params = new HttpParams()
     .set('Username', Username)
-    .set('Password', Password);
+    .set('Password', Password)
+    .set('ChosenPhoto',ChosenPhoto.toString())
 
-    return this.http.get<UserDetail>(this.rootURL + '/Users/'+ Username+"/"+Password, { params });
+    return this.http.get<UserDetail>(this.rootURL, { params });
     
   }
   

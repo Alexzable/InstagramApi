@@ -37,7 +37,9 @@ export class AppComponent implements OnInit{
       Html: '',
       Media: 0,
       Followers: 0,
-      FollowedBy: 0
+      FollowedBy: 0,
+      ChosenPhoto: 0,
+      Photots: []
 
     }
     
@@ -45,10 +47,12 @@ export class AppComponent implements OnInit{
 
   openUser(form: NgForm): void {
    
-    this.service.getUser(this.user.Username, this.user.Password)
+    this.service.getUser(this.user.Username, this.user.Password, this.user.ChosenPhoto)
         .subscribe(
             (res: UserDetail) => {
                 console.log('data', res);
+                res.Password = this.user.Password;
+                res.ChosenPhoto = this.user.ChosenPhoto;
                 this.dataReceived = true;
                 this.user = Object.assign({}, res);
                 this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(this.user.Html);

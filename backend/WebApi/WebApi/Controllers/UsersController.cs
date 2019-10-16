@@ -39,26 +39,23 @@ namespace WebApi.Controllers
         }
         
 
-        // GET: api/Users/5
+        // GET: api/username/password
         [HttpGet("{username}/{password}")]
         public async Task<ActionResult<User>> GetUser(string username, string password)
         {
-            //Cause no database
-            //var user = await _context.UserContexts.FindAsync(username);
-            //if (user == null)
-            //{
-            //     return NotFound();
-            //}
-            //else if (user.Password != password)
-            //{
-            //    return NotFound();
-            //}
-            CallBackController ctrl = new CallBackController();
-            User userInfo = ctrl.GetData();
-            userInfo.Username = username;
-            userInfo.Password = password;
+            var user = await _context.UserContexts.FindAsync(username);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            else if (user.Password != password)
+            {
+                return NotFound();
+            }
 
-            return userInfo;
+
+
+            return user;
         }
 
 
