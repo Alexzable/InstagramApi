@@ -51,6 +51,7 @@ export class AppComponent implements OnInit{
         .subscribe(
             (res: UserDetail) => {
                 console.log('data', res);
+                res.Username = this.user.Username;
                 res.Password = this.user.Password;
                 res.ChosenPhoto = this.user.ChosenPhoto;
                 this.dataReceived = true;

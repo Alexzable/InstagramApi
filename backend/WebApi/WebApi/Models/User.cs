@@ -8,7 +8,26 @@ using System.Threading.Tasks;
 namespace WebApi.Models
 {
     public class User
-    {   [Key]
+    {
+        public User(string clientId, string clientSecret, string name, string profePicture, string linkBio, double comments, double likes, double iDInsta, string location, string html, double media, double followers, double followedBy, string chosenPhoto)
+        {
+            ClientId = clientId;
+            ClientSecret = clientSecret;
+            Name = name;
+            ProfePicture = profePicture;
+            LinkBio = linkBio;
+            Comments = comments;
+            Likes = likes;
+            IDInsta = iDInsta;
+            Location = location;
+            Html = html;
+            Media = media;
+            Followers = followers;
+            FollowedBy = followedBy;
+            ChosenPhoto = chosenPhoto;
+        }
+
+        [Key]
         [Required]
         public string Username { get; set; }
         [Required]

@@ -14,46 +14,44 @@ using System.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace WebApi.Controllers
-{ 
+{
     public class CallBackController : Controller
     {
         private static User userData;
-        public static string accessTokenG = "";
-      
-        [HttpGet]
-        public void Atuhorization()
+        private static string accessTokenG = "";
+        //Step1  Receiving an access_token on server side
+       
+        public void Authorization()
         {
+           
             var client_id = ConfigurationManager.AppSettings["client_id"];
             var redirect_url = ConfigurationManager.AppSettings["redirect_uri"];
             Response.Redirect(ConfigurationManager.AppSettings["instagram_auth"] + client_id +
                "&redirect_uri=" + redirect_url + "&response_type=code");
+
+            
         }
+        //Step2 Receiving the redirect from Instagram
         [HttpGet]
         public async Task<ActionResult> CallBack(string code)
         {
 
             if (String.IsNullOrEmpty(code))
             {
-                Atuhorization();
+                return RedirectToAction("Authorization", "CallBack");
             }
             else if (!String.IsNullOrEmpty(code))
             {
                 accessTokenG = await GetAccessToken(code);
             }
+            if(accessTokenG!="")
+                return Redirect(ConfigurationManager.AppSettings["localhost2"]);
 
-            return Redirect(ConfigurationManager.AppSettings["localhost2"]);
+            return null;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<User>> PassDataToAngular(string username, string password,string chosenphoto)
-        {
-
-            userData = await GetDataInstagram(accessTokenG, chosenphoto);
-            userData.Html = await GetEaambededDataInstagram(userData.ChosenPhoto);
-
-            return userData;
-        }
-        [HttpGet]
+        //Step3  Request the access_token
+        [HttpPost]
         public async Task<String> GetAccessToken(string code)
         {
             try
@@ -82,16 +80,26 @@ namespace WebApi.Controllers
 
             }
 
-
         }
         [HttpGet]
-        public async Task<String> GetEaambededDataInstagram(string PhotoUrl)
+        public async Task<ActionResult<User>> PassDataToAngular(string username, string password, string chosenphoto)
+        {
+            //Username and Password normaly checked from the databasea
+            if(username== "trollfornothingbutmoney" && password =="pacolino" && chosenphoto != "")
+            {
+                userData = await GetDataInstagram(accessTokenG, chosenphoto);
+                userData.Html = await GetEmbededDataInstagram(userData.ChosenPhoto);
+            }
+            return userData;
+        }
+        [HttpGet]
+        public async Task<String> GetEmbededDataInstagram(string PhotoUrl)
         {
             try
             {
                 using(var client = new HttpClient())
                 {
-                    var response = await client.GetAsync("https://api.instagram.com/oembed?url=" + PhotoUrl);
+                    var response = await client.GetAsync(ConfigurationManager.AppSettings["instagram_embeded"] + PhotoUrl);
                     var responseString = await response.Content.ReadAsStringAsync();
                     JObject jObject = JObject.Parse(responseString);
                     string displayHtml = (string)jObject.SelectToken("html");
@@ -111,7 +119,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                User getUserDataInstagram = new User();
+               
                
                 using (var client = new HttpClient())
                 {
@@ -143,21 +151,9 @@ namespace WebApi.Controllers
                         Comments = Comments+ (double)jsResult["data"][i]["comments"]["count"];
                         Likes = Likes + (double)jsResult["data"][i]["likes"]["count"];
                     }
-
-                    getUserDataInstagram.IDInsta = IDInsta;
-                    getUserDataInstagram.LinkBio = LinkBio;
-                    getUserDataInstagram.Location = Location;
-                    getUserDataInstagram.Name = Name;
-                    getUserDataInstagram.ProfePicture = ProfilePicture;
-                    getUserDataInstagram.Username = Username;
-                    getUserDataInstagram.Followers = Follows;
-                    getUserDataInstagram.FollowedBy = FollowedBy;
-                    getUserDataInstagram.Comments = Comments;
-                    getUserDataInstagram.Likes = Likes;
-                    getUserDataInstagram.Media = PictureNr;
-                    getUserDataInstagram.ClientId = ConfigurationManager.AppSettings["client_id"];
-                    getUserDataInstagram.ClientSecret = ConfigurationManager.AppSettings["client_secret"];
-                    getUserDataInstagram.ChosenPhoto = linkPhoto;
+                    User getUserDataInstagram = new User(ConfigurationManager.AppSettings["client_id"], ConfigurationManager.AppSettings["client_secret"],
+                        Name, ProfilePicture, LinkBio, Comments, Likes, IDInsta, Location, "", PictureNr, Follows, FollowedBy, linkPhoto);
+    
 
                     return getUserDataInstagram;
                 }
@@ -170,8 +166,5 @@ namespace WebApi.Controllers
             }
         }
     
-
-       
-
     }
 }

@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class UserDetailService {
  
-  readonly rootURL ='https://localhost:44336/CallBack/PassDataToAngular/';
+  readonly rootURL ='https://localhost:44336/CallBack/PassDataToAngular';
 
   
   constructor(private http:HttpClient) { }
