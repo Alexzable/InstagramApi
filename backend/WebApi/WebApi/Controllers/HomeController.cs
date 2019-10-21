@@ -14,8 +14,15 @@ namespace WebApi.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private CallBackController ctrl = new CallBackController();
+        //public ActionResult Auhorizate()
+        //{
+        //    string accesTokenG = ctrl.Authorization(ctrl.GetCode());
+        //    if (accesTokenG != "")
+        //        return Redirect(ConfigurationManager.AppSettings["localhost2"]);
 
-
+        //    return Redirect(ConfigurationManager.AppSettings["localhost"]);
+        //}
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;

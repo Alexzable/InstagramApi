@@ -15,45 +15,48 @@ using Microsoft.Extensions.Logging;
 
 namespace WebApi.Controllers
 {
+    //[Route("[controller]")]
+    //[ApiController]
     public class CallBackController : Controller
     {
         private static User userData;
         private static string accessTokenG = "";
-        //Step1  Receiving an access_token on server side
-       
-        public void Authorization()
+        
+        public void ConnectToInstagram()
         {
-           
             var client_id = ConfigurationManager.AppSettings["client_id"];
             var redirect_url = ConfigurationManager.AppSettings["redirect_uri"];
-            Response.Redirect(ConfigurationManager.AppSettings["instagram_auth"] + client_id +
+             Response.Redirect(ConfigurationManager.AppSettings["instagram_auth"] + client_id +
                "&redirect_uri=" + redirect_url + "&response_type=code");
 
-            
         }
+       
         //Step2 Receiving the redirect from Instagram
         [HttpGet]
-        public async Task<ActionResult> CallBack(string code)
+        public async Task<ActionResult<string>> Authorization(string code)
         {
 
             if (String.IsNullOrEmpty(code))
             {
+                //Step1  Send post method to instagram for requiring the code;
+
                 return RedirectToAction("Authorization", "CallBack");
             }
             else if (!String.IsNullOrEmpty(code))
             {
+                //Step3  Request the access_token
                 accessTokenG = await GetAccessToken(code);
+                System.Diagnostics.Debug.WriteLine(accessTokenG);
             }
             if(accessTokenG!="")
                 return Redirect(ConfigurationManager.AppSettings["localhost2"]);
 
-            return null;
+            return Redirect(ConfigurationManager.AppSettings["localhost"]);
         }
-
-        //Step3  Request the access_token
         [HttpPost]
         public async Task<String> GetAccessToken(string code)
         {
+            System.Diagnostics.Debug.WriteLine(code);
             try
             {
                 var values = new Dictionary<string, string>    {
@@ -70,7 +73,8 @@ namespace WebApi.Controllers
                     var responseString = await response.Content.ReadAsStringAsync();
                     var jsResult = (JObject)JsonConvert.DeserializeObject(responseString);
                     var accessToken = (string)jsResult["access_token"];
-                  
+
+                    System.Diagnostics.Debug.WriteLine(accessToken);
                     return accessToken;
                 }
             }
@@ -92,7 +96,7 @@ namespace WebApi.Controllers
             }
             return userData;
         }
-        [HttpGet]
+     
         public async Task<String> GetEmbededDataInstagram(string PhotoUrl)
         {
             try
@@ -114,13 +118,15 @@ namespace WebApi.Controllers
 
             }
         }
-        [HttpGet]
+       
         public async Task<User> GetDataInstagram(string accessToken, string chosenphoto)
         {
+
+
+            System.Diagnostics.Debug.WriteLine(accessToken);
             try
             {
-               
-               
+
                 using (var client = new HttpClient())
                 {
                     //GET SELF OWNER INFORMATION
